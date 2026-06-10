@@ -1,0 +1,24 @@
+# docker compose --profile dev up
+
+networks:
+  letshare-net:
+    driver: bridge
+
+services:
+  letshare-net:
+    profiles: [dev, dev-net]
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+    networks:
+      - letshare-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
